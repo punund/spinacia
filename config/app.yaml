@@ -1,0 +1,48 @@
+default:
+
+  server:
+    port: 3003
+
+  zappa_params:
+    disable_io: yes
+
+  key:
+    tree: 8ec86790bb6a818a2f7298dc03eedd514b44d72bd13c0b91
+
+  api:
+    domain: X-Domain
+    token: X-Token
+
+  sendgrid:
+   username: app11794599@heroku.com
+   password: 'a64bjvj9'
+
+  mongodb:
+    uri: mongodb://heroku_app11794599:4c39g6iubaudnct34m0r2jllrr@ds031877.mongolab.com:31877/heroku_app11794599
+
+  validDomains:
+    - .localnet
+
+#----------------------------------------------------------------------
+development:
+  local: yes
+
+#----------------------------------------------------------------------
+staging:
+  validDomains:
+    - .staging.config.ly
+    - .herokuapp.com
+
+#----------------------------------------------------------------------
+production:
+  server:
+    port: 0
+  validDomains:
+    - .config.ly
+    - .config.li
+
+#----------------------------------------------------------------------
+test:
+  mongodb:
+    uri: mongodb://localhost
+
