@@ -1,10 +1,12 @@
 default:
 
-  server:
-    port: 3003
-
   zappa_params:
+    port: 3443
     disable_io: yes
+
+  https:
+    cert: ./cert/self-signed-certificate.pem
+    key:  ./cert/server.key
 
   key:
     tree: 8ec86790bb6a818a2f7298dc03eedd514b44d72bd13c0b91
