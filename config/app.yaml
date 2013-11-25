@@ -15,10 +15,6 @@ default:
     domain: X-Domain
     token: X-Token
 
-  sendgrid:
-   username: app11794599@heroku.com
-   password: 'a64bjvj9'
-
   mongodb:
     uri: mongodb://heroku_app11794599:4c39g6iubaudnct34m0r2jllrr@ds031877.mongolab.com:31877/heroku_app11794599
 
@@ -33,12 +29,16 @@ development:
 staging:
   validDomains:
     - .staging.config.ly
-    - .herokuapp.com
 
 #----------------------------------------------------------------------
 production:
-  server:
-    port: 0
+
+  zappa_params:
+    port: 443
+
+  https:
+    cert: ./cert/production-certificate.pem
+
   validDomains:
     - .config.ly
     - .config.li

@@ -1,11 +1,15 @@
-{ "name": "configly-api"
+{ "author": "Double 21 Ltd"
+, "description": "User API for Configly service"
+, "name": "configly-api"
 , "version": "0.0.1"
 , "private": true
 , "repository": "https://github.com/punund/configly-api.git"
+, "main": "-"
 , "dependencies":
   { "async": "*"
   , "coffee-script": "1.6"
   , "colors": "0.6"
+  , "create-upstart-monit": "*"
   , "debug": "0.7"
   , "zappajs": "*"
   , "lodash": "1.3.x"
