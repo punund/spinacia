@@ -1,0 +1,5 @@
+check process configly-api with pidfile "/var/run/configly-api.pid"
+    start program = "/sbin/start configly-api"
+    stop program = "/sbin/stop configly-api"
+    if failed port 443 with timeout 15 seconds then restart
+
