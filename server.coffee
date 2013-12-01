@@ -15,6 +15,9 @@ require('zappajs') params, ->
 
   @use 'logger'
 
+  @get '/status', ->
+    @send 200, 'OK'
+
   @get /\/(.*)/, ->
     tree_id = @params[0] or 'main'
 
