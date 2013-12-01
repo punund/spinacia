@@ -21,6 +21,8 @@ default:
   validDomains:
     - .localnet
 
+  maxTreeSize: 5000000
+
 #----------------------------------------------------------------------
 development:
   local: yes

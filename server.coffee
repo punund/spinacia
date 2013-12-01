@@ -1,3 +1,4 @@
+newrelic = require 'newrelic'
 _ = require 'lodash'
 fs = require 'fs'
 global.Conf = require('yaml-config').readConfig './config/app.yaml'
@@ -35,4 +36,12 @@ require('zappajs') params, ->
       if not Util.compareTreeKey token, tree.key
         return @send 403, 'Token doesn\'t match'
 
-      @json 200, tree.data
+      if tree.data.length > Conf.maxTreeSize
+        return @send 403, 'Response is too long'
+
+      try
+        js = JSON.parse tree.data
+        @json 200, js
+      catch
+        @send 503, 'Bad JSON'
+

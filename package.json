@@ -14,6 +14,7 @@
   , "zappajs": "*"
   , "lodash": "1.3.x"
   , "mongoose": "3.6"
+  , "newrelic": "*"
   , "yaml-config": "*"
 }
 , "engines":
