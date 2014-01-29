@@ -1,7 +1,7 @@
 { "author": "Double 21 Ltd"
 , "description": "User API for Configly service"
 , "name": "configly-api"
-, "version": "0.0.1"
+, "version": "0.0.2"
 , "private": true
 , "repository": "https://github.com/punund/configly-api.git"
 , "main": "-"
@@ -9,13 +9,13 @@
   { "async": "*"
   , "coffee-script": "1.6"
   , "colors": "0.6"
-  , "create-upstart-monit": "*"
   , "debug": "0.7"
-  , "zappajs": "*"
   , "lodash": "1.3.x"
   , "mongoose": "3.6"
   , "newrelic": "*"
+  , "nodeb": "*"
   , "yaml-config": "*"
+  , "zappajs": "*"
 }
 , "engines":
   { "node": "0.10"
@@ -25,11 +25,14 @@
   { "mocha": "*"
   , "node-dev": "2.0"
   , "should": "*"
-  , "supertest": "*"
   }
 , "scripts":
   { "//postinstall": "./node_modules/.bin/bower i"
   , "test": "make test"
   , "start": "DEBUG=configly-api:* NODE_ENV=test ./node_modules/node-dev/bin/node-dev server.coffee"
+  , "deb": "nodeb -n -w api.config.ly -s -o -p 443"
+  }
+, "config":
+  { "start": "./node_modules/.bin/coffee server.coffee"
   }
 }

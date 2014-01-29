@@ -11,6 +11,12 @@ if Conf.https? then params.https =
   key:  fs.readFileSync Conf.https.key
   cert: fs.readFileSync Conf.https.cert
 
+process.umask 0o002 # group writable
+
+unless ~~Conf.zappa_params.port
+  try fs.unlinkSync Conf.zappa_params.port
+  catch e
+
 require('zappajs') params, ->
 
   @use 'logger'

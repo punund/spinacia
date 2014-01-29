@@ -4,9 +4,9 @@ default:
     port: 3443
     disable_io: yes
 
-  https:
-    cert: ./cert/self-signed-certificate.pem
-    key:  ./cert/server.key
+  # https:
+  #   cert: ./cert/self-signed-certificate.pem
+  #   key:  ./cert/server.key
 
   key:
     tree: 8ec86790bb6a818a2f7298dc03eedd514b44d72bd13c0b91
@@ -18,9 +18,6 @@ default:
   mongodb:
     uri: mongodb://heroku_app11794599:4c39g6iubaudnct34m0r2jllrr@ds031877.mongolab.com:31877/heroku_app11794599
 
-  validDomains:
-    - .localnet
-
   maxTreeSize: 5000000
 
 #----------------------------------------------------------------------
@@ -28,22 +25,10 @@ development:
   local: yes
 
 #----------------------------------------------------------------------
-staging:
-  validDomains:
-    - .staging.config.ly
-
-#----------------------------------------------------------------------
 production:
 
   zappa_params:
-    port: 443
-
-  https: no
-  #cert: ./cert/production-certificate.pem
-
-  validDomains:
-    - .config.ly
-    - .config.li
+    port: /var/run/proxy.sock/node-configly-api.443
 
 #----------------------------------------------------------------------
 test:

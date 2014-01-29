@@ -1,9 +1,0 @@
-/var/log/configly-api.log {
-    rotate 7
-    daily
-    missingok
-    notifempty
-    sharedscripts
-    copytruncate
-    compress
-}
