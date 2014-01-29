@@ -38,8 +38,8 @@ production:
   zappa_params:
     port: 443
 
-  https:
-    cert: ./cert/production-certificate.pem
+  https: no
+  #cert: ./cert/production-certificate.pem
 
   validDomains:
     - .config.ly

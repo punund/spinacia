@@ -7,7 +7,7 @@ Util = require './modules/util'
 DB = require './modules/database'
 
 params = Conf.zappa_params
-params.https = 
+if Conf.https? then params.https = 
   key:  fs.readFileSync Conf.https.key
   cert: fs.readFileSync Conf.https.cert
 
