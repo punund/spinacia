@@ -30,6 +30,7 @@ require('zappajs') params, ->
 
     auth = basicAuth @req
     if not auth
+      @res.set 'WWW-Authenticate', 'Basic realm="Configly API"'
       return @send 401, "Authentication required\n"
 
     domain = auth.name
