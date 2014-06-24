@@ -1,4 +1,6 @@
+debug = require('debug') 'configly-api:server'
 newrelic = require 'newrelic'
+basicAuth = require 'basic-auth'
 _ = require 'lodash'
 fs = require 'fs'
 global.Conf = require('yaml-config').readConfig './config/app.yaml'
@@ -22,35 +24,44 @@ require('zappajs') params, ->
   @use 'logger'
 
   @get '/status', ->
-    @send 200, 'OK'
+    @send 200, "OK\n"
 
   @get /\/(.*)/, ->
-    tree_id = @params[0] or 'main'
 
-    domain = @req.header Conf.api.domain
-    token  = @req.header Conf.api.token
+    auth = basicAuth @req
+    if not auth
+      return @send 401, "Authentication required\n"
 
-    unless domain and token
-      return @send 400, "#{Conf.api.domain} and #{Conf.api.token} request headers required"
+    domain = auth.name
+    token  = auth.pass
 
     DB.Seed.findOne id: domain, (err, seed) =>
       if err
-        console.err err
-        return @send 503, 'Backend error'
+        console.error err
+        return @send 503, "Backend error\n"
         
       if not seed
-        return @send 404, 'No such tree in this domain'
+        return @send 403, "Authentication failure\n"
+
+      tree_id = @params[0] or seed.defaultTree or 'main'
         
       tree = (_.filter seed.trees, (tree) -> tree.id is tree_id)?[0]
+
+      if not tree
+        return @send 403, "Authentication failure\n"
+
       if not Util.compareTreeKey token, tree.key
-        return @send 403, 'Token doesn\'t match'
+        return @send 403, "Authentication failure\n"
+
+      if not tree.data
+        return @json 200, {}
 
       if tree.data.length > Conf.maxTreeSize
-        return @send 403, 'Response is too long'
+        return @send 403, "Response is too long\n"
 
       try
         js = JSON.parse tree.data
         @json 200, js
       catch
-        @send 503, 'Bad JSON'
+        @send 503, "Bad JSON\n"
 

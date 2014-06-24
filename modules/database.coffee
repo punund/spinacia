@@ -1,12 +1,23 @@
 mongoose = require 'mongoose'
+
+keepAlive = keepAlive: 1
 options =
   server:
-    socketOptions: { keepAlive: 1 }
-  replset:
-    socketOptions: { keepAlive: 1 }
+    auto_reconnect: on
+    socketOptions: keepAlive
+    replset: keepAlive
 
-db = mongoose.connect Conf.mongodb.uri, options, (err) ->
-  console.log '!!! mongoose connect error: ', err if err
+mongolog = (m) -> console.log("*** MongoDB #{m} ***")
+
+db = mongoose.connect Conf.mongodb.uri, options
+
+connection = mongoose.connection
+connection.on 'connected', -> mongolog 'connected'
+connection.on 'close', -> mongolog 'closed'
+connection.on 'reconnected', -> mongolog 'reconnected'
+connection.on 'disconnected', -> mongolog 'disconnected'
+connection.on 'error', (error) ->
+  mongolog 'error: ' + error
 
 
 Seed = db.model 'Seed', mongoose.Schema

@@ -11,12 +11,9 @@ default:
   key:
     tree: 8ec86790bb6a818a2f7298dc03eedd514b44d72bd13c0b91
 
-  api:
-    domain: X-Domain
-    token: X-Token
-
   mongodb:
-    uri: mongodb://heroku_app11794599:4c39g6iubaudnct34m0r2jllrr@ds031877.mongolab.com:31877/heroku_app11794599
+    # uri: mongodb://heroku_app11794599:4c39g6iubaudnct34m0r2jllrr@ds031877.mongolab.com:31877/heroku_app11794599
+    uri: mongodb://heroku_app11794599_A:DqwAKXvqyZvOSZJeTlxEoppDODOmXjRn@ds031877.mongolab.com:31877/heroku_app11794599
 
   maxTreeSize: 5000000
 

@@ -1,3 +1,4 @@
+debug = require('debug') 'configly-api:util'
 crypto = require 'crypto'
 
 treeKey = new Buffer Conf.key.tree, 'hex'
