@@ -3,6 +3,7 @@ newrelic = require 'newrelic'
 basicAuth = require 'basic-auth'
 _ = require 'lodash'
 fs = require 'fs'
+xmlbuilder = require 'xmlbuilder'
 global.Conf = require('yaml-config').readConfig './config/app.yaml'
 
 Util = require './modules/util'
@@ -26,7 +27,7 @@ require('zappajs') params, ->
   @get '/status', ->
     @send 200, "OK\n"
 
-  @get /\/(.*)/, ->
+  @get /\/(\w*)\.?(\w*)?/, ->
 
     auth = basicAuth @req
     if not auth
@@ -35,6 +36,13 @@ require('zappajs') params, ->
 
     domain = auth.name
     token  = auth.pass
+
+    # format = @params[1] or 'json'
+    debug @req.header 'accept'
+
+    accepts = @req.accepts('json, html, xml')
+    if not accepts
+      return @send 406, "We serve JSON or XML\n"
 
     DB.Seed.findOne id: domain, (err, seed) =>
       if err
@@ -55,14 +63,28 @@ require('zappajs') params, ->
         return @send 403, "Authentication failure\n"
 
       if not tree.data
-        return @json 200, {}
+        return @jsonp 200, {}
 
       if tree.data.length > Conf.maxTreeSize
         return @send 403, "Response is too long\n"
 
+      js = null
       try
         js = JSON.parse tree.data
-        @json 200, js
-      catch
-        @send 503, "Bad JSON\n"
+      catch err
+        console.error err
+        return @send 503, "Bad JSON\n"
 
+
+      if accepts isnt 'xml' # json, html
+        @jsonp 200, js
+      else
+        try
+          root = xmlbuilder.create('root', encoding: 'UTF-8').ele(js)
+          xml = root.end(pretty: yes)
+
+          @res.set 'Content-Type', 'application/xml'
+          @send 200, xml
+        catch err
+          console.error err
+          @send 503, "Error preparing XML\n"
