@@ -1,8 +1,9 @@
 debug = require('debug') 'configly-api:server'
-newrelic = require 'newrelic'
+# newrelic = require 'newrelic'
 basicAuth = require 'basic-auth'
 _ = require 'lodash'
 fs = require 'fs'
+morgan = require 'morgan'
 xmlbuilder = require 'xmlbuilder'
 global.Conf = require('yaml-config').readConfig './config/app.yaml'
 
@@ -22,7 +23,7 @@ unless ~~Conf.zappa_params.port
 
 require('zappajs') params, ->
 
-  @use 'logger'
+  @use morgan 'combined'
 
   @get '/status', ->
     @send 200, "OK\n"
@@ -41,8 +42,8 @@ require('zappajs') params, ->
     debug @req.header 'accept'
 
     accepts = @req.accepts('json, html, xml')
-    if not accepts
-      return @send 406, "We serve JSON or XML\n"
+    # if not accepts
+    #   return @send 406, "We serve JSON or XML\n"
 
     DB.Seed.findOne id: domain, (err, seed) =>
       if err
@@ -63,7 +64,7 @@ require('zappajs') params, ->
         return @send 403, "Authentication failure\n"
 
       if not tree.data
-        return @jsonp 200, {}
+        @res.jsonp {}
 
       if tree.data.length > Conf.maxTreeSize
         return @send 403, "Response is too long\n"
@@ -73,18 +74,18 @@ require('zappajs') params, ->
         js = JSON.parse tree.data
       catch err
         console.error err
-        return @send 503, "Bad JSON\n"
+        return @status(503).send "Bad JSON\n"
 
 
       if accepts isnt 'xml' # json, html
-        @jsonp 200, js
+        @res.jsonp js
       else
         try
           root = xmlbuilder.create('root', encoding: 'UTF-8').ele(js)
           xml = root.end(pretty: yes)
 
           @res.set 'Content-Type', 'application/xml'
-          @send 200, xml
+          @send xml
         catch err
           console.error err
-          @send 503, "Error preparing XML\n"
+          @status(503).send "Error preparing XML\n"

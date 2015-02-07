@@ -12,7 +12,6 @@ default:
     tree: 8ec86790bb6a818a2f7298dc03eedd514b44d72bd13c0b91
 
   mongodb:
-    # uri: mongodb://heroku_app11794599:4c39g6iubaudnct34m0r2jllrr@ds031877.mongolab.com:31877/heroku_app11794599
     uri: mongodb://heroku_app11794599_A:DqwAKXvqyZvOSZJeTlxEoppDODOmXjRn@ds031877.mongolab.com:31877/heroku_app11794599
 
   maxTreeSize: 5000000
@@ -25,7 +24,8 @@ development:
 production:
 
   zappa_params:
-    port: /var/run/proxy.sock/node-configly-api.443
+    port: 5000
+    # port: /var/run/proxy.sock/node-configly-api.443
 
 #----------------------------------------------------------------------
 test:
