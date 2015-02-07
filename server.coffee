@@ -1,5 +1,5 @@
 debug = require('debug') 'configly-api:server'
-# newrelic = require 'newrelic'
+newrelic = require 'newrelic'
 basicAuth = require 'basic-auth'
 _ = require 'lodash'
 fs = require 'fs'
