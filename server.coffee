@@ -1,91 +1,115 @@
-debug = require('debug') 'configly-api:server'
-newrelic = require 'newrelic'
-basicAuth = require 'basic-auth'
-_ = require 'lodash'
-fs = require 'fs'
-morgan = require 'morgan'
-xmlbuilder = require 'xmlbuilder'
+debug = require('debug') 'spinacia:server'
+
 global.Conf = require('yaml-config').readConfig './config/app.yaml'
-
 Util = require './modules/util'
-DB = require './modules/database'
+Api = require './modules/api'
 
-params = Conf.zappa_params
-if Conf.https? then params.https = 
-  key:  fs.readFileSync Conf.https.key
-  cert: fs.readFileSync Conf.https.cert
+uuid = require 'node-uuid'
+spawn = require('child-process-promise').spawn
+morgan = require 'morgan'
+Promise = require 'bluebird'
+request = require 'request-promise'
+basicAuth = require 'basic-auth'
+bodyParser = require 'body-parser'
 
-process.umask 0o002 # group writable
+promiseRedis = require('promise-redis')((r) -> new Promise r)
+redis = promiseRedis.createClient()
 
-unless ~~Conf.zappa_params.port
-  try fs.unlinkSync Conf.zappa_params.port
-  catch e
+kue = require('kue')
+global.queue = kue.createQueue(disableSearch: no)
+
+# kue.app.listen 49152, 'localhost'
+
+popeye = process.env.POPEYE_BINARY or Conf.popeye
+
+queue.process 'popeye', 3, (job, done) ->
+   any = (x) ->
+      done null, x
+
+   spawn popeye, [], capture: ['stdout', 'stderr']
+      .then any, any, (cp) ->
+         # job.data.pid = cp.pid
+         # input = job.data.input.replace /^\s*begi\w*\s/i, 'Begin Opti NoBoard '
+         input = job.data.input
+
+         cp.stdin.end input
+
+params = port: (process.env.PORT or 5000)
 
 require('zappajs') params, ->
 
-  @use morgan 'combined'
+   RedisStore = require('connect-redis')(@session)
 
-  @get '/status', ->
-    @send 200, "OK\n"
+   # @disable 'minify'
+   @use morgan 'dev'
+   # @use bodyParser.json type: Conf.contentType
+   @use static: __dirname + '/public'
+   @use session: secret: 'south', resave: no, saveUninitialized: no, store: new RedisStore()
 
-  @get /\/(\w*)\.?(\w*)?/, ->
+   @get '/olive', ->
+      @render 'olive.blade'
 
-    auth = basicAuth @req
-    if not auth
-      @res.set 'WWW-Authenticate', 'Basic realm="Configly API"'
-      return @send 401, "Authentication required\n"
-
-    domain = auth.name
-    token  = auth.pass
-
-    # format = @params[1] or 'json'
-    debug @req.header 'accept'
-
-    accepts = @req.accepts('json, html, xml')
-    # if not accepts
-    #   return @send 406, "We serve JSON or XML\n"
-
-    DB.Seed.findOne id: domain, (err, seed) =>
-      if err
-        console.error err
-        return @send 503, "Backend error\n"
-        
-      if not seed
-        return @send 403, "Authentication failure\n"
-
-      tree_id = @params[0] or seed.defaultTree or 'main'
-        
-      tree = (_.filter seed.trees, (tree) -> tree.id is tree_id)?[0]
-
-      if not tree
-        return @send 403, "Authentication failure\n"
-
-      if not Util.compareTreeKey token, tree.key
-        return @send 403, "Authentication failure\n"
-
-      if not tree.data
-        @res.jsonp {}
-
-      if tree.data.length > Conf.maxTreeSize
-        return @send 403, "Response is too long\n"
-
-      js = null
-      try
-        js = JSON.parse tree.data
-      catch err
-        console.error err
-        return @status(503).send "Bad JSON\n"
+   # @use @wrap ->
+   #    @res.header 'Content-Type', Conf.contentType
+   #    @next()
 
 
-      if accepts isnt 'xml' # json, html
-        @res.jsonp js
-      else
-        try
-          root = xmlbuilder.create('root', encoding: 'UTF-8').ele(js)
-          xml = root.end(pretty: yes)
+   @client '/main.js': ->
+      @connect()
 
-          @res.set 'Content-Type', 'application/xml'
-          @send xml
-        catch err
-          console.error err
-          @status(503).send "Error preparing XML\n"
+      @on 'disconnect', (socket) ->
+         console.log 'Server is gone'
+
+      @on solved: ->
+         $('#error').hide()
+         $('#solution').show().text @data.stdout
+
+      @on queued: ->
+         $('#error').hide()
+         $('#solution').show().text "Queued with ID #{@data.id}, solving..."
+
+      @on failed: ->
+         $('#solution').hide()
+         $('#error').show().text @data.stderr
+
+      @on rejected: ->
+         $('#solution').hide()
+         $('#error').show().text @data.errors[0].title
+
+      $ =>
+         $('#error').hide()
+   
+         $('#form').submit (e) =>
+            $('#solution').text "Solving..."
+            @emit solve:
+               input: $('#input').val()
+               token: '@olive'
+            e.preventDefault()
+
+   @use Util.errorWare
+
+   @on solve: ->
+
+      @data.id = uuid.v4()
+
+      unless @data?.token?.match /@/
+         @emit rejected: errors: [ title: 'Invalid token' ]
+         return
+
+      unless @data?.input.match /\sstip/i
+         @emit rejected: errors: [ title: 'Need stipulation' ]
+         return
+
+      job = Api.postTasks @data
+
+      job.save (err) =>
+         if err
+            @emit rejected: errors: [ err ]
+         else
+            @emit queued: id: @data.id
+
+      job.on 'complete', (result) =>
+         if result.code
+            @emit failed: result
+         else
+            @emit solved: result

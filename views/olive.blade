@@ -1,0 +1,30 @@
+!!! 5
+html
+   head
+      title Spinacia demo
+
+      //- link(href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css"  rel="stylesheet")
+      link(href="css/uikit.css" rel="stylesheet")
+
+      script(src="/zappa/simple.js")
+      script(src="//cdnjs.cloudflare.com/ajax/libs/uikit/2.22.0/js/uikit.min.js")
+
+      script(src="/main.js")
+
+   body.uk-container.uk-margin-top.uk-container-center
+      .uk-grid
+         .uk-width-1-2
+            h3 Try popeye
+            form.uk-form#form
+               fieldset
+                  .uk-form-row
+                     textarea#input(rows='12' cols='60')
+                  .uk-form-row
+                     button.uk-button(type='submit')
+                        | Solve
+         .uk-width-1-2
+            .uk-panel-title
+               | Solution
+            .uk-panel.uk-panel-box
+               pre#solution
+               pre.uk-alert.danger#error

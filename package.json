@@ -1,40 +1,44 @@
 {
   "author": "Iļja Ketris",
-  "description": "User API for Configly service",
-  "name": "configly-api",
+  "description": "Spooling server for solving chess problems with popeye",
+  "name": "spinacia",
   "version": "0.1.1",
   "private": true,
-  "repository": "https://github.com/punund/configly-api.git",
+  "repository": "https://github.com/punund/spinacia.git",
   "main": "-",
   "dependencies": {
-    "async": "*",
     "basic-auth": "*",
+    "blade": "^3.3.0",
+    "bluebird": "^2.9.34",
+    "body-parser": "^1.13.3",
+    "child-process-promise": "^1.1.0",
+    "cli-color": "^1.0.0",
     "coffee-script": "^1.8.0",
     "colors": "^0.6.2",
+    "connect-redis": "^2.5.0",
     "debug": "^0.7.4",
-    "jsontoxml": "*",
+    "kue": "^0.9.4",
     "lodash": "^2.4.1",
     "mongoose": "^3.6.20",
     "morgan": "^1.5.1",
-    "newrelic": "^1.16.1",
-    "xmlbuilder": "^2.2.1",
+    "node-uuid": "^1.4.3",
+    "promise-redis": "0.0.1",
+    "request-promise": "^0.4.3",
     "yaml-config": "*",
-    "zappajs": "*"
+    "zappajs": "^3.0.1"
   },
   "engines": {
     "node": "0.10",
     "npm": "1.2"
   },
   "devDependencies": {
-    "mocha": "*",
-    "node-dev": "2.0",
-    "nodeb": "*",
-    "should": "*"
+    "mocha": "^2.3.2",
+    "node-dev": "2.7",
+    "should": "^7.1.0"
   },
   "scripts": {
     "//postinstall": "./node_modules/.bin/bower i",
-    "test": "make test",
-    "start": "DEBUG=configly-api:* ./node_modules/node-dev/bin/node-dev server.coffee",
-    "deb": "./node_modules/.bin/nodeb -w config.ly -n -s"
+    "test": "node_modules/.bin/mocha -w",
+    "start": "DEBUG=spinacia:* ./node_modules/node-dev/bin/node-dev server.coffee"
   }
 }
