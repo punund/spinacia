@@ -7,7 +7,6 @@ Api = require './modules/api'
 uuid = require 'node-uuid'
 spawn = require('child-process-promise').spawn
 morgan = require 'morgan'
-request = require 'request-promise'
 basicAuth = require 'basic-auth'
 bodyParser = require 'body-parser'
 
@@ -26,7 +25,6 @@ queue.process 'popeye', 3, (job, done) ->
 
    spawn popeye, [], capture: ['stdout', 'stderr']
       .then any, any, (cp) ->
-         # job.data.pid = cp.pid
          # input = job.data.input.replace /^\s*begi\w*\s/i, 'Begin Opti NoBoard '
          input = job.data.input
 
@@ -44,13 +42,13 @@ require('zappajs') params, ->
    @use static: __dirname + '/public'
    @use session: secret: 'south', resave: no, saveUninitialized: no, store: new RedisStore()
 
-   @get '/olive', ->
-      @render 'olive.blade'
+   @get '/', -> @render 'index.blade'
+
+   @get '/olive', ->  @render 'olive.blade'
 
    # @use @wrap ->
    #    @res.header 'Content-Type', Conf.contentType
    #    @next()
-
 
    @client '/main.js': ->
       @connect()
