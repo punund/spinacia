@@ -6,17 +6,16 @@ default:
 
 
   contentType: 'application/vnd.api+json'
-  popeye: '/usr/local/bin/py'
+  popeye: /usr/local/bin/py
 
 #----------------------------------------------------------------------
 development:
   local: yes
-  redis: 'redis://localhost'
 
 #----------------------------------------------------------------------
 production:
 
-  redis: process.env.REDIS_URL
+  popeye: /app/vendor/bin/py
   zappa_params:
     port: 5000
     # port: /var/run/proxy.sock/node-configly-api.443
