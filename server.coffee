@@ -7,18 +7,16 @@ Api = require './modules/api'
 uuid = require 'node-uuid'
 spawn = require('child-process-promise').spawn
 morgan = require 'morgan'
-Promise = require 'bluebird'
 request = require 'request-promise'
 basicAuth = require 'basic-auth'
 bodyParser = require 'body-parser'
 
-promiseRedis = require('promise-redis')((r) -> new Promise r)
-redis = promiseRedis.createClient()
+REDIS_URL = process.env.REDIS_URL or 'redis://localhost'
 
 kue = require('kue')
-global.queue = kue.createQueue(disableSearch: no)
-
-# kue.app.listen 49152, 'localhost'
+global.queue = kue.createQueue
+   disableSearch: no
+   redis: REDIS_URL
 
 popeye = process.env.POPEYE_BINARY or Conf.popeye
 

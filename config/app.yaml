@@ -11,10 +11,12 @@ default:
 #----------------------------------------------------------------------
 development:
   local: yes
+  redis: 'redis://localhost'
 
 #----------------------------------------------------------------------
 production:
 
+  redis: process.env.REDIS_URL
   zappa_params:
     port: 5000
     # port: /var/run/proxy.sock/node-configly-api.443
