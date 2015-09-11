@@ -19,7 +19,6 @@
     "debug": "^0.7.4",
     "kue": "^0.9.4",
     "lodash": "^2.4.1",
-    "mongoose": "^3.6.20",
     "morgan": "^1.5.1",
     "node-uuid": "^1.4.3",
     "promise-redis": "0.0.1",
@@ -29,7 +28,7 @@
   },
   "engines": {
     "node": "0.10",
-    "npm": "1.2"
+    "npm": "*"
   },
   "devDependencies": {
     "mocha": "^2.3.2",
@@ -39,6 +38,7 @@
   "scripts": {
     "//postinstall": "./node_modules/.bin/bower i",
     "test": "node_modules/.bin/mocha -w",
-    "start": "DEBUG=spinacia:* ./node_modules/node-dev/bin/node-dev server.coffee"
+    "//start": "DEBUG=spinacia:* ./node_modules/node-dev/bin/node-dev server.coffee",
+    "start": "coffee server.coffee"
   }
 }
