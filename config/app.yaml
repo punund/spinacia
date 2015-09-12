@@ -1,10 +1,5 @@
 default:
 
-  # zappa_params:
-  #   port: 3443
-  #   disable_io: no
-
-
   contentType: 'application/vnd.api+json'
   popeye: /usr/local/bin/py
 
@@ -16,12 +11,6 @@ development:
 production:
 
   popeye: /app/vendor/bin/py
-  zappa_params:
-    port: 5000
-    # port: /var/run/proxy.sock/node-configly-api.443
 
 #----------------------------------------------------------------------
-test:
-  mongodb:
-    uri: mongodb://localhost
 

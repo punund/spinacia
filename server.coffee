@@ -62,7 +62,8 @@ require('zappajs') params, ->
 
       @on queued: ->
          $('#error').hide()
-         $('#solution').show().text "Queued with ID #{@data.id}, solving..."
+         $('#solution').show().text "Queued with ID #{@data.id}, " +
+            "queue size is #{@data.total}, solving..."
 
       @on failed: ->
          $('#solution').hide()
@@ -86,8 +87,6 @@ require('zappajs') params, ->
 
    @on solve: ->
 
-      @data.id = uuid.v4()
-
       unless @data?.token?.match /@/
          @emit rejected: errors: [ title: 'Invalid token' ]
          return
@@ -96,13 +95,18 @@ require('zappajs') params, ->
          @emit rejected: errors: [ title: 'Need stipulation' ]
          return
 
-      job = Api.postTasks @data
+      @data.id = uuid.v4()
+
+      debug @socket.request.connection.remoteAddress
+
+      job = Api.postTasks @data, @socket.request.connection.remoteAddress
 
       job.save (err) =>
          if err
             @emit rejected: errors: [ err ]
          else
-            @emit queued: id: @data.id
+            queue.activeCount (err, total) =>
+               @emit queued: id: @data.id, total: total
 
       job.on 'complete', (result) =>
          if result.code

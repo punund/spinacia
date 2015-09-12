@@ -5,17 +5,15 @@ Util = require '../modules/util'
 
 exports =
 
-    postTasks: (data, id) ->
-      debug data
-      console.log data
-      console.log data.input
-      id ?= 'direct'
+    postTasks: (data, ip) ->
+      id = data.id
       input = data.input
-      job = queue.create 'popeye',
-         title: Util.stipulation input
-         input: input
-         id: id
+      title = Util.stipulation input
+      debug title
+      console.log '>>> SOLVE ' + clc.xterm(82)(title) + ' ' + ip
+      job = queue.create 'popeye', {title, input, id}
       .priority Util.stip2priority input
+      .removeOnComplete yes
 
 module.exports = exports
 
