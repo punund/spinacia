@@ -10,7 +10,7 @@ exports =
       input = data.input
       title = Util.stipulation input
       debug title
-      console.log '>>> SOLVE ' + clc.xterm(82)(title) + ' ' + ip
+      console.log '>>> SOLVE ' + clc.xterm(82)(title) + ' ' + data.token
       job = queue.create 'popeye', {title, input, id}
       .priority Util.stip2priority input
       .removeOnComplete yes
