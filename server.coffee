@@ -46,9 +46,13 @@ require('zappajs') params, ->
 
    @get '/olive', ->  @render 'olive.blade'
 
-   # @use @wrap ->
-   #    @res.header 'Content-Type', Conf.contentType
-   #    @next()
+   @use @wrap ->
+      @res.header 'Content-Type', Conf.contentType
+      @next()
+
+   @get '/status', ->
+      @jsonp status: 'ok'
+
 
    @client '/main.js': ->
       @connect()
