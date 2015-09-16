@@ -92,6 +92,7 @@ require('zappajs') params, ->
    @on solve: ->
 
       unless @data?.token?.match /@/
+         console.log '--- INVALID TOKEN ', @data
          @emit rejected: errors: [ title: 'Invalid token' ]
          return
 
