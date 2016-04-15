@@ -1,6 +1,6 @@
 # Popeye solving server
 
-## WebSockets API
+## socket.io API
 
 ### Client messages
 
@@ -34,7 +34,7 @@ Popeye finished successfully
     stderr: popeye srderr
     code: popeye exit code
 
-There was a sysntax or logical error in input
+There was a syntax or logical error in input
 
 ## REST API (not implemented)
 
