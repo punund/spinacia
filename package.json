@@ -15,7 +15,7 @@
     "cli-color": "^1.0.0",
     "coffee-script": "^1.8.0",
     "connect-redis": "^2.5.0",
-    "debug": "^0.7.4",
+    "debug": "^4.1.1",
     "kue": "git+https://github.com/Automattic/kue.git",
     "morgan": "^1.5.1",
     "node-uuid": "^1.4.3",
