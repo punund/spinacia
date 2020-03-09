@@ -1,3 +1,6 @@
+---
+a: b
+---
 # Popeye solving server
 
 ## socket.io API
